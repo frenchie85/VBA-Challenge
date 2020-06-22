@@ -1,9 +1,7 @@
 Sub StockMarketAnalysis():
 
-    ' Loop / Iterate Through All Worksheets
     For Each ws In Worksheets
 
-        ' Column Headers / Data Field Labels
         ws.Range("I1").Value = "Ticker"
         ws.Range("J1").Value = "Yearly Change"
         ws.Range("K1").Value = "Percent Change"
@@ -14,7 +12,6 @@ Sub StockMarketAnalysis():
         ws.Range("P1").Value = "Ticker"
         ws.Range("Q1").Value = "Value"
 
-        ' Set/Declare Initial Variables And Set Default/Baseline Variables
         Dim TickerName As String
         Dim LastRow As Long
         Dim TotalTickerVolume As Double
@@ -35,54 +32,43 @@ Sub StockMarketAnalysis():
         Dim GreatestTotalVolume As Double
         GreatestTotalVolume = 0
 
-        ' Determine the Last Row
         LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
         
         For i = 2 To LastRow
 
-            ' Add To Ticker Total Volume
             TotalTickerVolume = TotalTickerVolume + ws.Cells(i, 7).Value
-            ' Check If We Are Still Within The Same Ticker Name If It Is Not...
+
             If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
 
 ' ### Easy ###
 
-                ' Set Ticker Name
                 TickerName = ws.Cells(i, 1).Value
-                ' Print The Ticker Name In The Summary Table
                 ws.Range("I" & SummaryTableRow).Value = TickerName
-                ' Print The Ticker Total Amount To The Summary Table
                 ws.Range("L" & SummaryTableRow).Value = TotalTickerVolume
-                ' Reset Ticker Total
                 TotalTickerVolume = 0
 
 ' ### Moderate ###
 
-                ' Set Yearly Open, Yearly Close and Yearly Change Name
                 YearlyOpen = ws.Range("C" & PreviousAmount)
                 YearlyClose = ws.Range("F" & i)
                 YearlyChange = YearlyClose - YearlyOpen
                 ws.Range("J" & SummaryTableRow).Value = YearlyChange
 
-                ' Determine Percent Change
                 If YearlyOpen = 0 Then
                     PercentChange = 0
                 Else
                     YearlyOpen = ws.Range("C" & PreviousAmount)
                     PercentChange = YearlyChange / YearlyOpen
                 End If
-                ' Format Double To Include % Symbol And Two Decimal Places
                 ws.Range("K" & SummaryTableRow).NumberFormat = "0.00%"
                 ws.Range("K" & SummaryTableRow).Value = PercentChange
 
-                ' Conditional Formatting Highlight Positive (Green) / Negative (Red)
                 If ws.Range("J" & SummaryTableRow).Value >= 0 Then
                     ws.Range("J" & SummaryTableRow).Interior.ColorIndex = 4
                 Else
                     ws.Range("J" & SummaryTableRow).Interior.ColorIndex = 3
                 End If
             
-                ' Add One To The Summary Table Row
                 SummaryTableRow = SummaryTableRow + 1
                 PreviousAmount = i + 1
                 End If
@@ -90,10 +76,8 @@ Sub StockMarketAnalysis():
 
 ' ### Hard ###
 
-            ' Greatest % Increase, Greatest % Decrease and Greatest Total Volume
             LastRow = ws.Cells(Rows.Count, 11).End(xlUp).Row
         
-            ' Start Loop For Final Results
             For i = 2 To LastRow
                 If ws.Range("K" & i).Value > ws.Range("Q2").Value Then
                     ws.Range("Q2").Value = ws.Range("K" & i).Value
@@ -111,11 +95,9 @@ Sub StockMarketAnalysis():
                 End If
 
             Next i
-        ' Format Double To Include % Symbol And Two Decimal Places
             ws.Range("Q2").NumberFormat = "0.00%"
             ws.Range("Q3").NumberFormat = "0.00%"
             
-        ' Format Table Columns To Auto Fit
         ws.Columns("I:Q").AutoFit
 
     Next ws
